@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="ce0942ad-1726-431d-8203-4f98987510fc" name="My Baidu" url="http://106.12.162.9">
+        <fileTransfer host="106.12.162.9" port="22" rootFolder="/home/wwwroot/go1.isharetheme.com" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="f7737754-fb94-48e5-873b-b2b9cb793eaf" name="VM" url="http://192.168.201.3">
+        <fileTransfer host="192.168.201.3" port="22" rootFolder="/home/www/go1.isharetheme.com" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
