@@ -22,7 +22,7 @@ func GetTags(content *gin.Context) {
 	}
 
 	var state int = 1
-	if arg := content.Query("state"); arg != "" {
+	if arg := content.Query("status"); arg != "" {
 		state = com.StrTo(arg).MustInt()
 		maps["state"] = state
 	}
@@ -74,24 +74,23 @@ func AddTag(content *gin.Context) {
 
 func EditTag(content *gin.Context) {
 	id := com.StrTo(content.Param("id")).MustInt()
-	modifiedBy := content.PostForm("modified_by")
+	updatedBy := content.PostForm("updated_by")
 	name  := content.PostForm("name ")
 
 	valid := validation.Validation{}
 
-	var state int = 1
-	if arg := content.PostForm("state"); arg != "" {
-		state = com.StrTo(arg).MustInt()
-		valid.Range(state, 0, 1, "state")
+	var status int = 1
+	if arg := content.PostForm("status"); arg != "" {
+		status = com.StrTo(arg).MustInt()
+		valid.Range(status, 0, 1, "status")
 	}
 
 	valid.Required(id, "id").Message("ID不能为空")
-	valid.Required(modifiedBy, "modified_by").Message("修改人不能为空")
-	valid.MaxSize(modifiedBy, 100, "modified_by").Message("修改人最长为100字符")
-	valid.MaxSize(name, 100, "modified_by").Message("名称最长为100字符")
+	valid.Required(updatedBy, "updated_by").Message("修改人不能为空")
+	valid.MaxSize(updatedBy, 100, "updated_by").Message("修改人最长为100字符")
+	valid.MaxSize(name, 100, "updated_by").Message("名称最长为100字符")
 
 	code := enum.INVALID_PARAMS
-	msg := ""
 
 	if !valid.HasErrors() {
 		code = enum.SUCCESS
@@ -103,22 +102,20 @@ func EditTag(content *gin.Context) {
 				data["name"] = name
 			}
 
-			data["state"] = state
-			data["modified_by"] = modifiedBy
+			data["status"] = status
+			data["updated_by"] = updatedBy
 
 			models.EditTag(id, data)
 		} else {
 			code = enum.ERROR_NOT_EXIST_TAG
 		}
-
-		msg = enum.GetMsg(code)
-	} else {
-		msg = valid.Errors[0].Message
 	}
+
+	println(code)
 
 	content.JSON(http.StatusOK, gin.H{
 		"code" : code,
-		"msg" : msg,
+		"msg" : enum.GetMsg(code),
 		"data": make(map[string]interface{}),
 	})
 

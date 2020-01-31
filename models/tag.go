@@ -1,17 +1,12 @@
 package models
 
-import (
-	"github.com/jinzhu/gorm"
-	"time"
-)
-
 type Tag struct {
 	Model
 
 	Name       string `json:"name"`
 	CreatedBy  string `json:"created_by"`
-	ModifiedBy string `json:"modified_by"`
-	State      int    `json:"state"`
+	ModifiedBy string `json:"updated_by"`
+	Status      int    `json:"status"`
 }
 
 func GetTags(pageNum int, pageSize int, maps interface{}) (tags []Tag) {
@@ -37,10 +32,10 @@ func ExistTagByName(name string) bool {
 	return false
 }
 
-func AddTag(name string, state int, createdBy string) bool {
+func AddTag(name string, status int, createdBy string) bool {
 	db.Create(&Tag{
 		Name:      name,
-		State:     state,
+		Status:     status,
 		CreatedBy: createdBy,
 	})
 
@@ -69,16 +64,5 @@ func Deletetag(id int) bool {
 	return true
 }
 
-func (tag *Tag) BeforeCreate(scope *gorm.Scope) error {
-	scope.SetColumn("CreatedOn", time.Now().Unix())
-
-	return nil
-}
-
-func (tag *Tag) BeforeUpdate(scope *gorm.Scope) error {
-	scope.SetColumn("ModifiedOn", time.Now().Unix())
-
-	return nil
-}
 
 

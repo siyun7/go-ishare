@@ -11,6 +11,10 @@ var MsgFlags  = map[int]string {
 	ERROR_AUTH_CHECK_TOKEN_TIMEOUT : "Token已超时",
 	ERROR_AUTH_TOKEN : "Token生成失败",
 	ERROR_AUTH : "Token错误",
+
+
+	ERROR_EXIST_USER : "已存在该标签名称",
+	ERROR_NOT_EXIST_USER : "该标签不存在",
 }
 
 func GetMsg(code int) string {
