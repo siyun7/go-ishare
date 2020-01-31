@@ -41,9 +41,9 @@ func GetTags(content *gin.Context) {
 }
 
 func AddTag(content *gin.Context) {
-	name := content.Query("name")
-	state := com.StrTo(content.DefaultQuery("state", "0")).MustInt()
-	createdBy := content.Query("created_by")
+	name := content.PostForm("name")
+	state := com.StrTo(content.DefaultPostForm("state", "0")).MustInt()
+	createdBy := content.PostForm("created_by")
 
 	valid := validation.Validation{}
 	valid.Required(name, "name").Message("名称不能为空")
@@ -73,9 +73,80 @@ func AddTag(content *gin.Context) {
 }
 
 func EditTag(content *gin.Context) {
+	id := com.StrTo(content.Param("id")).MustInt()
+	modifiedBy := content.PostForm("modified_by")
+	name  := content.PostForm("name ")
+
+	valid := validation.Validation{}
+
+	var state int = 1
+	if arg := content.PostForm("state"); arg != "" {
+		state = com.StrTo(arg).MustInt()
+		valid.Range(state, 0, 1, "state")
+	}
+
+	valid.Required(id, "id").Message("ID不能为空")
+	valid.Required(modifiedBy, "modified_by").Message("修改人不能为空")
+	valid.MaxSize(modifiedBy, 100, "modified_by").Message("修改人最长为100字符")
+	valid.MaxSize(name, 100, "modified_by").Message("名称最长为100字符")
+
+	code := enum.INVALID_PARAMS
+	msg := ""
+
+	if !valid.HasErrors() {
+		code = enum.SUCCESS
+
+		if models.ExistTagByID(id) {
+			data := make(map[string]interface{})
+
+			if name != "" {
+				data["name"] = name
+			}
+
+			data["state"] = state
+			data["modified_by"] = modifiedBy
+
+			models.EditTag(id, data)
+		} else {
+			code = enum.ERROR_NOT_EXIST_TAG
+		}
+
+		msg = enum.GetMsg(code)
+	} else {
+		msg = valid.Errors[0].Message
+	}
+
+	content.JSON(http.StatusOK, gin.H{
+		"code" : code,
+		"msg" : msg,
+		"data": make(map[string]interface{}),
+	})
+
 
 }
 
 func DeleteTag(content *gin.Context) {
+	id := com.StrTo(content.PostForm("id")).MustInt()
 
+	valid := validation.Validation{}
+
+	valid.Min(id, 1, "id").Message("ID必须大于0")
+
+	code := enum.INVALID_PARAMS
+
+	if !valid.HasErrors() {
+		code = enum.SUCCESS
+
+		if models.ExistTagByID(id) {
+			models.Deletetag(id)
+		} else {
+			code = enum.ERROR_NOT_EXIST_TAG
+		}
+	}
+
+	content.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg": enum.GetMsg(code),
+		"data": make(map[string]interface{}),
+	})
 }

@@ -2,9 +2,11 @@ package models
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
-	"github.com/siyun7/go-ishare/pkg/setting"
 	"log"
+
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/siyun7/go-ishare/pkg/setting"
 )
 
 var db *gorm.DB
